@@ -13,7 +13,7 @@ class CarbonLog:
         self.cursor.execute('''
             CREATE TABLE IF NOT EXISTS carbon_log (
                 id INTEGER PRIMARY KEY,
-                flight_id TEXT,
+                flight_id TEXT NOT NULL FOREIGN KEY,
                 source TEXT,
                 carbon_output REAL
             )
