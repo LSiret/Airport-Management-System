@@ -1,4 +1,9 @@
+from Passenger import Passenger
+
 class Flight:
+
+    """
+    Class to represent a flight with its details and passengers."""
 
     # Constructor to initialize flight details
     def __init__(self, flight_id, departure_airport, arrival_airport, departure_time, arrival_time, status=None, passengers=[]):
@@ -11,12 +16,27 @@ class Flight:
         self.passengers = passengers
 
     def __str__(self):
-        return f"Flight {self.flight_number} from {self.departure_airport} to {self.arrival_airport} departing at {self.departure_time} and arriving at {self.arrival_time}"
+        return f"Flight {self.flight_id} from {self.departure_airport} to {self.arrival_airport} departing at {self.departure_time} and arriving at {self.arrival_time}"
     
     def update_status(self, status):
         self.status = status
-        print(f"Flight {self.flight_number} status updated to {status}.")
 
-    def add_passenger(self, passenger):
+    def add_passenger(self, passenger : Passenger):
+        # Check if the passenger is already on the flight
+        for existing_passenger in self.passengers:
+            if existing_passenger.passenger_id == passenger.passenger_id:
+                print(f"Passenger {passenger.passenger_id} is already on flight {self.flight_id}.")
+                return
         self.passengers.append(passenger)
-        print(f"Passenger {passenger.name} added to flight {self.flight_number}.")
+        print(f"Passenger {passenger.passenger_id} added to flight {self.flight_id}.")
+    
+    def remove_passenger(self, passenger_id):
+        
+        # Check if the passenger exists
+        for passenger in self.passengers:
+            if passenger.passenger_id == passenger_id:
+                self.passengers.remove(passenger)
+                print(f"Passenger {passenger_id} removed from flight {self.flight_id}.")
+                return
+        print(f"Passenger {passenger_id} not found on flight {self.flight_id}.")
+

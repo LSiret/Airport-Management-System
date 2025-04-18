@@ -1,9 +1,11 @@
 import sqlite3
 
 class CarbonLog:
+    """
+    This class is used to log carbon emissions data to a table using SQLite.
+    """
 
-    def __init__(self, flight_id):
-        self.flight_id = flight_id
+    def __init__(self):
 
         # Initialize database connection
         self.conn = sqlite3.connect('.db/carbon_log.db')
@@ -13,7 +15,7 @@ class CarbonLog:
         self.cursor.execute('''
             CREATE TABLE IF NOT EXISTS carbon_log (
                 id INTEGER PRIMARY KEY,
-                flight_id TEXT NOT NULL FOREIGN KEY,
+                flight_id TEXT NOT NULL,
                 source TEXT,
                 carbon_output REAL
             )
@@ -21,19 +23,17 @@ class CarbonLog:
         self.conn.commit()
 
     # Log new data
-    def log_emission(self, source, carbon_output):
+    def log_emission(self, flight_id, source, carbon_output):
 
         # Insert new emission data
         self.cursor.execute('''
             INSERT INTO carbon_log (flight_id, source, carbon_output)
             VALUES (?, ?, ?)
-        ''', (self.flight_id, source, carbon_output))
+        ''', (flight_id, source, carbon_output))
         self.conn.commit()
-
-        print(f"Emission logged for flight {self.flight_id} from {source} with output {carbon_output}.")
     
     # Show all logged data
-    def show_data(self):
+    def show_data_all(self):
 
         # Fetch all data from the table
         self.cursor.execute('''
@@ -41,7 +41,22 @@ class CarbonLog:
         ''')
         rows = self.cursor.fetchall()
 
-        print(f"All logged data for flight {self.flight_id}:")
+        print(f"Showing all emissions data:")
+
+        # Print the data
+        for row in rows:
+            print(row)
+    
+    # Show data for a specific flight
+    def show_data_flight(self, flight_id):
+
+        # Fetch data for the specific flight
+        self.cursor.execute('''
+            SELECT * FROM carbon_log WHERE flight_id = ?
+        ''', (flight_id,))
+        rows = self.cursor.fetchall()
+
+        print(f"Showing emissions data for flight {flight_id}:")
 
         # Print the data
         for row in rows:
