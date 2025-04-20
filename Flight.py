@@ -3,7 +3,8 @@ from Passenger import Passenger
 class Flight:
 
     """
-    Class to represent a flight with its details and passengers."""
+    Class to represent a flight with its details and passengers.
+    """
 
     # Constructor to initialize flight details
     def __init__(self, flight_id, departure_airport, arrival_airport, departure_time, arrival_time, status=None, passengers=[]):
