@@ -8,7 +8,11 @@ app = Flask(__name__)
 # Define a route for the home page
 @app.route('/')
 def home():
-    return render_template('index.html')
+
+    # Get carbon logs
+    logs = airport_controller.get_carbon_logs()
+
+    return render_template('index.html', logs=logs)
 
 # Check this file was run directly
 if __name__ == '__main__':

@@ -87,16 +87,13 @@ class AirportController:
             print(f"Passenger {passenger_id} not found on flight {flight_id}.")
             return False
     
-    def show_carbon_logs(self, flight_id: str=None):
+    def get_carbon_logs(self, flight_id: str=None):
 
         # Display Logs
         if flight_id:
-            print(f"Showing logs for flight {flight_id}:")
-            self.carbon_log.show_data_flight(flight_id)
-
+            return self.carbon_log.get_data_flight(flight_id)
         else:
-            print("Showing all logs:")
-            self.carbon_log.show_data_all()
+            return self.carbon_log.get_data_all()
 
     def log_emission(self, flight_id: str, source: str, carbon_output: str):
 
