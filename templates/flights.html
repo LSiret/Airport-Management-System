@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Manage Flights</title>
+    <link rel="stylesheet" href="/static/css/style.css">
+</head>
+<body>
+    <header>
+        <h1>Flight Management</h1>
+        <nav>
+            <a href="/">Home</a>
+            <a href="/flights">Flights</a>
+            <a href="/analytics">Analytics</a>
+            <a href="/security">Security</a>
+            <a href="/checkin">Passenger Check-In</a>
+        </nav>
+    </header>
+
+    <main>
+        <section>
+            <h2>All Flights</h2>
+            {% if flights %}
+            <table>
+                <thead>
+                    <tr>
+                        <th>Flight ID</th>
+                        <th>From</th>
+                        <th>To</th>
+                        <th>Departure</th>
+                        <th>Arrival</th>
+                        <th>Status</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for flight in flights %}
+                    <tr>
+                        <td>{{ flight.flight_id }}</td>
+                        <td>{{ flight.departure_airport }}</td>
+                        <td>{{ flight.arrival_airport }}</td>
+                        <td>{{ flight.departure_time }}</td>
+                        <td>{{ flight.arrival_time }}</td>
+                        <td>{{ flight.status }}</td>
+                        <td>
+                            <form method="post" action="/update_flight_status">
+                                <input type="hidden" name="flight_id" value="{{ flight.flight_id }}">
+                                <select name="status">
+                                    <option value="On Time">On Time</option>
+                                    <option value="Delayed">Delayed</option>
+                                    <option value="Cancelled">Cancelled</option>
+                                </select>
+                                <button type="submit">Update</button>
+                            </form>
+                            <form method="post" action="/remove_flight">
+                                <input type="hidden" name="flight_id" value="{{ flight.flight_id }}">
+                                <button type="submit">Remove</button>
+                            </form>
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+            {% else %}
+                <p>No flights found.</p>
+            {% endif %}
+        </section>
+
+        <section>
+            <h3>Add New Flight</h3>
+            <form method="post" action="/add_flight">
+                <input type="text" name="flight_id" placeholder="Flight ID" required>
+                <input type="text" name="departure_airport" placeholder="Departure Airport" required>
+                <input type="text" name="arrival_airport" placeholder="Arrival Airport" required>
+                <input type="text" name="departure_time" placeholder="Departure Time" required>
+                <input type="text" name="arrival_time" placeholder="Arrival Time" required>
+                <button type="submit">Add Flight</button>
+            </form>
+        </section>
+    </main>
+
+    <footer>
+        <p>&copy; 2025 Smart Airport Inc.</p>
+    </footer>
+</body>
+</html>
