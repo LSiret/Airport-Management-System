@@ -2,37 +2,58 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Airport Management System</title>
+    <title>Smart Airport Dashboard</title>
+    <link rel="stylesheet" href="/static/css/style.css">
 </head>
 <body>
     <header>
-        <h1>Welcome to the Airport Management System</h1>
+        <h1>Smart Airport Management System</h1>
+        <nav>
+            <a href="/">Home</a>
+            <a href="/flights">Flights</a>
+            <a href="/analytics">Analytics</a>
+            <a href="/security">Security</a>
+            <a href="/checkin">Passenger Check-In</a>
+        </nav>
     </header>
+
     <main>
-        <p>Here are all currently listed flights and their carbon emissions.</p>
-        
-        <table border="1">
-            <thead>
-                <tr>
-                    <th>ID</th>
-                    <th>Flight ID</th>
-                    <th>Source</th>
-                    <th>Carbon Output</th>
-                </tr>
-            </thead>
-            <tbody>
-                {% for log in logs %}
-                <tr>
-                    <td>{{ log[0] }}</td>
-                    <td>{{ log[1] }}</td>
-                    <td>{{ log[2] }}</td>
-                    <td>{{ log[3] }}</td>
-                </tr>
-                {% endfor %}
-            </tbody>
-        </table>
-        
+        <section>
+            <h2>Welcome to the Smart Airport Dashboard</h2>
+            <p>Use the navigation above to access flight data, analytics, and security features.</p>
+        </section>
+
+        <section>
+            <h3>Recent Carbon Emission Logs</h3>
+            {% if logs %}
+            <table>
+                <thead>
+                    <tr>
+                        <th>ID</th>
+                        <th>Flight ID</th>
+                        <th>Source</th>
+                        <th>Carbon Output (kg)</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for log in logs %}
+                    <tr>
+                        <td>{{ log[0] }}</td>
+                        <td>{{ log[1] }}</td>
+                        <td>{{ log[2] }}</td>
+                        <td>{{ log[3] }}</td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+            {% else %}
+                <p>No emission logs available.</p>
+            {% endif %}
+        </section>
     </main>
+
+    <footer>
+        <p>&copy; 2025 Smart Airport Inc.</p>
+    </footer>
 </body>
 </html>
