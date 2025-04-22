@@ -40,6 +40,20 @@ def remove_flight():
     airport_controller.remove_flight(flight_id)
     return redirect(url_for('flights'))
 
+@app.route('/checkin')
+def checkin():
+    return render_template('checkin.html', flights=airport_controller.flights)
+
+@app.route('/checkin_passenger', methods=['POST'])
+def checkin_passenger():
+    flight_id = request.form['flight_id']
+    passenger_id = request.form['passenger_id']
+    passenger_name = request.form['passenger_name']
+    luggage = request.form.get('luggage')
+    seat = request.form.get('seat')
+    airport_controller.add_passenger(flight_id, passenger_id, passenger_name, luggage, seat)
+    return redirect(url_for('checkin'))
+
 
 # Check this file was run directly
 if __name__ == '__main__':
