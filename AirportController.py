@@ -106,5 +106,36 @@ class AirportController:
             self.carbon_log.log_emission(flight_id, source, carbon_output)
             print(f"Emission logged for flight {flight_id} from {source} with output {carbon_output}.")
 
+    
+    def get_delay_summary(self):
+        delayed_flights = [f for f in self.flights if f.status and "delay" in f.status.lower()]
+        return delayed_flights
+
+    def get_passenger_stats(self):
+        stats = []
+        for flight in self.flights:
+            count = len(flight.passengers)
+            stats.append((flight.flight_id, count))
+
+        if stats:
+            values = [c for _, c in stats]
+            return {
+                "stats": stats,
+                "max": max(stats, key=lambda x: x[1]),
+                "min": min(stats, key=lambda x: x[1]),
+                "avg": round(sum(values) / len(values), 2)
+            }
+        else:
+            return {"stats": [], "max": None, "min": None, "avg": 0}
+
+    def get_avg_carbon_emission(self):
+        logs = self.carbon_log.get_data_all()
+        if not logs:
+            return 0
+
+        total = sum(row[3] for row in logs)  # carbon_output is column index 3
+        return round(total / len(logs), 2)
+
+
 
 

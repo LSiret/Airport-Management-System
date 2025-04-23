@@ -61,6 +61,18 @@ def checkin_passenger():
 
     return redirect(url_for('checkin'))
 
+@app.route('/analytics')
+def analytics():
+    delay_info = airport_controller.get_delay_summary()
+    carbon_avg = airport_controller.get_avg_carbon_emission()
+    passenger_stats = airport_controller.get_passenger_stats()
+
+    return render_template('analytics.html',
+                           delays=delay_info,
+                           carbon_avg=carbon_avg,
+                           passenger_stats=passenger_stats)
+
+
 
 # Check this file was run directly
 if __name__ == '__main__':
