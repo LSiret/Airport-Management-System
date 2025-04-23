@@ -1,9 +1,10 @@
 # Import necessary files
 from AirportController import AirportController
-from flask import Flask, render_template, request, redirect, url_for
+from flask import Flask, render_template, request, redirect, url_for, flash
 
 # Initialize the Flask app
 app = Flask(__name__)
+app.secret_key = 'bigSecret123'
 
 # Define a route for the home page
 @app.route('/')
@@ -51,7 +52,13 @@ def checkin_passenger():
     passenger_name = request.form['passenger_name']
     luggage = request.form.get('luggage')
     seat = request.form.get('seat')
-    airport_controller.add_passenger(flight_id, passenger_id, passenger_name, luggage, seat)
+
+    try:
+        airport_controller.add_passenger(flight_id, passenger_id, passenger_name, luggage, seat)
+        flash(f"Passenger {passenger_name} successfully checked in for flight {flight_id}.", 'success')
+    except Exception as e:
+        flash(f"Check-in failed: {str(e)}", 'danger')
+
     return redirect(url_for('checkin'))
 
 
