@@ -1,0 +1,153 @@
+/* style.css */
+
+body {
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    margin: 0;
+    padding: 0;
+    background-color: #f4f6f8;
+    color: #333;
+}
+
+header {
+    background-color: #1f2937;
+    color: white;
+    padding: 20px 40px;
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+}
+
+header h1 {
+    margin: 0;
+    font-size: 24px;
+}
+
+nav {
+    margin-top: 10px;
+}
+
+nav a {
+    color: #cbd5e1;
+    margin-right: 20px;
+    text-decoration: none;
+    font-weight: 500;
+}
+
+nav a:hover {
+    color: white;
+}
+
+main {
+    padding: 40px;
+}
+
+section {
+    background: white;
+    border-radius: 12px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+    margin-bottom: 30px;
+    padding: 30px;
+}
+
+h2, h3 {
+    margin-top: 0;
+}
+
+table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 20px;
+}
+
+table thead {
+    background-color: #e5e7eb;
+}
+
+table th, table td {
+    text-align: left;
+    padding: 12px 16px;
+    border-bottom: 1px solid #ddd;
+}
+
+table tr:hover {
+    background-color: #f9fafb;
+}
+
+footer {
+    background-color: #1f2937;
+    color: white;
+    text-align: center;
+    padding: 15px 0;
+    font-size: 14px;
+}
+
+form {
+    margin-top: 20px;
+}
+
+.form-group {
+    margin-bottom: 20px;
+    display: flex;
+    flex-direction: column;
+}
+
+.form-group label {
+    margin-bottom: 8px;
+    font-weight: 500;
+}
+
+input, select {
+    padding: 10px;
+    border: 1px solid #ccc;
+    border-radius: 8px;
+    font-size: 16px;
+    background-color: #f9fafb;
+}
+
+input:focus, select:focus {
+    outline: none;
+    border-color: #6366f1;
+    background-color: #fff;
+}
+
+.form-actions {
+    display: flex;
+    gap: 10px;
+}
+
+button[type="submit"] {
+    padding: 10px 20px;
+    background-color: #2563eb;
+    color: white;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    font-weight: 600;
+}
+
+button[type="submit"]:hover {
+    background-color: #1e40af;
+}
+
+.cancel-btn {
+    padding: 10px 20px;
+    background-color: #9ca3af;
+    color: white;
+    border-radius: 8px;
+    text-decoration: none;
+    display: inline-block;
+    font-weight: 600;
+}
+
+.cancel-btn:hover {
+    background-color: #6b7280;
+}
+
+.alert {
+    margin-bottom: 20px;
+    padding: 12px 20px;
+    border-radius: 8px;
+    background-color: #fee2e2;
+    color: #991b1b;
+    font-weight: 500;
+}
