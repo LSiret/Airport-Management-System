@@ -3,7 +3,7 @@ from Passenger import Passenger
 
 class Flight:
     def __init__(self, flight_id, departure_airport=None, arrival_airport=None,
-                 departure_time=None, arrival_time=None, status=None):
+                 departure_time=None, arrival_time=None, status=None, passengers=None):
         
         self.conn = sqlite3.connect('.db/flights.db', check_same_thread=False)
         self.cursor = self.conn.cursor()
@@ -37,6 +37,7 @@ class Flight:
         if flight_data:
             # Load existing data
             _, self.departure_airport, self.arrival_airport, self.departure_time, self.arrival_time, self.status = flight_data
+            self.passengers = self.list_passengers()
         else:
             # Create new flight record
             self.departure_airport = departure_airport
@@ -44,6 +45,7 @@ class Flight:
             self.departure_time = departure_time
             self.arrival_time = arrival_time
             self.status = status
+            self.passengers = passengers if passengers is not None else []
 
             self.cursor.execute('''
                 INSERT INTO flights (flight_id, departure_airport, arrival_airport, departure_time, arrival_time, status)

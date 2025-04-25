@@ -11,10 +11,30 @@ class AirportController:
     def load_flights_from_db(self):
         conn = sqlite3.connect('.db/flights.db')
         cursor = conn.cursor()
+
         cursor.execute("SELECT * FROM flights")
-        rows = cursor.fetchall()
+        flight_rows = cursor.fetchall()
+
+        flights = []
+        for row in flight_rows:
+            flight_id, departure_airport, arrival_airport, departure_time, arrival_time, status = row
+
+        # Get passengers for this flight
+        cursor.execute("SELECT * FROM passengers WHERE flight_id = ?", (flight_id,))
+        passenger_rows = cursor.fetchall()
+        passengers = [
+            Passenger(p_id, name, luggage, seat)
+            for (p_id, name, luggage, seat, _) in passenger_rows
+        ]
+
+        flight = Flight(
+            flight_id, departure_airport, arrival_airport,
+            departure_time, arrival_time, status, passengers
+        )
+        flights.append(flight)
+
         conn.close()
-        return [Flight(*row) for row in rows]
+        return flights
 
     def get_flight_by_id(self, flight_id: str):
         for flight in self.flights:
