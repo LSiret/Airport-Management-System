@@ -1,6 +1,7 @@
 from Flight import Flight
 from Passenger import Passenger
 from CarbonLog import CarbonLog
+from Luggage import Luggage
 import sqlite3
 
 class AirportController:
@@ -88,6 +89,53 @@ class AirportController:
                     return True
             print(f"Passenger {passenger_id} not found on flight {flight_id}.")
         return False
+    
+    def log_new_luggage(self, luggage_id: str, weight: float, flight_id: str, passenger_id: str, status: str=None):
+        
+        # Check if flight exists
+        flight = self.get_flight_by_id(flight_id)
+        if not flight:
+            print(f"Flight {flight_id} not found. Cannot add luggage.")
+            return
+
+        # Check if passenger exists
+        passenger = next((p for p in flight.passengers if p.passenger_id == passenger_id), None)
+        if not passenger:
+            print(f"Passenger {passenger_id} not found on flight {flight_id}. Cannot add luggage.")
+            return
+        
+        # Check if luggage already exists
+        if any(l.luggage_id == luggage_id for l in passenger.luggage):
+            print(f"Luggage {luggage_id} already exists for passenger {passenger_id}.")
+            return
+        
+        # Create and add luggage
+        luggage = Luggage(luggage_id, weight, flight_id, passenger_id, status)
+        passenger.add_luggage(luggage)
+        print(f"Luggage {luggage_id} added to flight {flight_id} for passenger {passenger_id}.")
+    
+    def update_luggage_status(self, luggage_id: str, status: str):
+        conn = sqlite3.connect('.db/luggage.db')
+        cursor = conn.cursor()
+
+        # Update luggage status
+        cursor.execute('''
+            UPDATE luggage
+            SET status = ?
+            WHERE luggage_id = ?
+        ''', (status, luggage_id))
+        conn.commit()
+
+        # Log the status update in history
+        cursor.execute('''
+            INSERT INTO luggage_history (luggage_id, status)
+            VALUES (?, ?)
+        ''', (luggage_id, status))
+        conn.commit()
+        conn.close()
+        
+        print(f"Luggage {luggage_id} status updated to {status}.")
+
 
     def get_carbon_logs(self, flight_id: str=None):
         if flight_id:

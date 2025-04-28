@@ -9,10 +9,10 @@ class Passenger:
     """
     
     # Constructor to initialize passenger details
-    def __init__(self, name: str, passenger_id: int, luggageID: int=None, seat_number: int=None):
+    def __init__(self, name: str, passenger_id: int, luggageIDs: str=[], seat_number: int=None):
         self.name = name
         self.passenger_id = passenger_id
-        self.luggage = luggageID
+        self.luggage = luggageIDs
         self.seat_number = None
 
     def __str__(self):
@@ -25,3 +25,7 @@ class Passenger:
 
         # Log to show completion of check-in
         print(f"Passenger {self.name} has checked in.")
+    
+    def add_luggage(self, luggage_id: str):
+        self.luggage.append(luggage_id)
+        print(f"Luggage {luggage_id} added to passenger {self.name}.")
