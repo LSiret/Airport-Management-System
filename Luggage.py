@@ -85,5 +85,20 @@ class Luggage:
 
             # Commit the changes
             self.conn.commit()
+    
+    def get_history(self):
+        """
+        Retrieves the history of status updates for this luggage item.
+        
+        :return: List of tuples containing the status history.
+        """
+        with self.conn:
+            cursor = self.conn.cursor()
+            cursor.execute('''
+                SELECT * FROM luggage_history
+                WHERE luggage_id = ?
+            ''', (self.luggage_id,))
+            history = cursor.fetchall()
+            return history
 
 
