@@ -13,26 +13,42 @@ class AirportController:
         conn = sqlite3.connect('.db/flights.db')
         cursor = conn.cursor()
 
+        conn.execute('''
+            CREATE TABLE IF NOT EXISTS flights (
+                flight_id TEXT PRIMARY KEY,
+                departure_airport TEXT,
+                arrival_airport TEXT,
+                departure_time TEXT,
+                arrival_time TEXT,
+                status TEXT
+            )
+        ''')
+
         cursor.execute("SELECT * FROM flights")
         flight_rows = cursor.fetchall()
+
+        if not flight_rows:
+            print("No flights found in the database.")
+            return []
 
         flights = []
         for row in flight_rows:
             flight_id, departure_airport, arrival_airport, departure_time, arrival_time, status = row
 
-        # Get passengers for this flight
-        cursor.execute("SELECT * FROM passengers WHERE flight_id = ?", (flight_id,))
-        passenger_rows = cursor.fetchall()
-        passengers = [
-            Passenger(p_id, name, luggage, seat)
-            for (p_id, name, luggage, seat, _) in passenger_rows
-        ]
+            # Get passengers for this flight
+            cursor.execute("SELECT * FROM passengers WHERE flight_id = ?", (flight_id,))
+            passenger_rows = cursor.fetchall()
+            print(passenger_rows)
+            passengers = [
+                Passenger(p_id, name, luggage, seat)
+                for (p_id, name, luggage, seat, _) in passenger_rows
+            ]
 
-        flight = Flight(
-            flight_id, departure_airport, arrival_airport,
-            departure_time, arrival_time, status, passengers
-        )
-        flights.append(flight)
+            flight = Flight(
+                flight_id, departure_airport, arrival_airport,
+                departure_time, arrival_time, status, passengers
+            )
+            flights.append(flight)
 
         conn.close()
         return flights

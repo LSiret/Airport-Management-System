@@ -25,6 +25,8 @@ class Flight:
                 passenger_id TEXT,
                 name TEXT,
                 flight_id TEXT,
+                luggage_id TEXT,
+                seat TEXT,
                 PRIMARY KEY (passenger_id, flight_id),
                 FOREIGN KEY (flight_id) REFERENCES flights(flight_id)
             )
