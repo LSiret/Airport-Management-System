@@ -2,77 +2,128 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>Manage Flights</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Manage Flights - Smart Airport</title>
+    <!-- Bootstrap 5 CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Custom CSS -->
     <link rel="stylesheet" href="/static/css/style.css">
 </head>
-<body>
-
+<body class="bg-light">
     {% include './components/header.html' %}
 
-    <main>
-        <section>
-            <h2>All Flights</h2>
-            {% if flights %}
-            <table>
-                <thead>
-                    <tr>
-                        <th>Flight ID</th>
-                        <th>From</th>
-                        <th>To</th>
-                        <th>Departure</th>
-                        <th>Arrival</th>
-                        <th>Status</th>
-                        <th>Actions</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    {% for flight in flights %}
-                    <tr>
-                        <td>{{ flight.flight_id }}</td>
-                        <td>{{ flight.departure_airport }}</td>
-                        <td>{{ flight.arrival_airport }}</td>
-                        <td>{{ flight.departure_time }}</td>
-                        <td>{{ flight.arrival_time }}</td>
-                        <td>{{ flight.status }}</td>
-                        <td>
-                            <form method="post" action="/update_flight_status">
-                                <input type="hidden" name="flight_id" value="{{ flight.flight_id }}">
-                                <select name="status">
-                                    <option value="On Time">On Time</option>
-                                    <option value="Delayed">Delayed</option>
-                                    <option value="Cancelled">Cancelled</option>
-                                </select>
-                                <button type="submit">Update</button>
-                            </form>
-                            <form method="post" action="/remove_flight">
-                                <input type="hidden" name="flight_id" value="{{ flight.flight_id }}">
-                                <button type="submit">Remove</button>
-                            </form>
-                        </td>
-                    </tr>
-                    {% endfor %}
-                </tbody>
-            </table>
-            {% else %}
-                <p>No flights found.</p>
-            {% endif %}
-        </section>
+    <main class="container py-4">
+        <!-- Flights Table Card -->
+        <div class="card shadow-sm mb-4">
+            <div class="card-header bg-primary text-white">
+                <h3 class="card-title mb-0"><i class="fas fa-plane me-2"></i>All Flights</h3>
+            </div>
+            <div class="card-body">
+                {% if flights %}
+                <div class="table-responsive">
+                    <table class="table table-hover">
+                        <thead>
+                            <tr>
+                                <th>Flight ID</th>
+                                <th>From</th>
+                                <th>To</th>
+                                <th>Departure</th>
+                                <th>Arrival</th>
+                                <th>Status</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for flight in flights %}
+                            <tr>
+                                <td>{{ flight.flight_id }}</td>
+                                <td>{{ flight.departure_airport }}</td>
+                                <td>{{ flight.arrival_airport }}</td>
+                                <td>{{ flight.departure_time }}</td>
+                                <td>{{ flight.arrival_time }}</td>
+                                <td>
+                                    <span class="badge {% if flight.status == 'On Time' %}bg-success{% elif flight.status == 'Delayed' %}bg-warning{% else %}bg-danger{% endif %}">
+                                        {{ flight.status }}
+                                    </span>
+                                </td>
+                                <td>
+                                    <div class="btn-group">
+                                        <form method="post" action="/update_flight_status" class="d-inline">
+                                            <input type="hidden" name="flight_id" value="{{ flight.flight_id }}">
+                                            <select name="status" class="form-select form-select-sm">
+                                                <option value="On Time">On Time</option>
+                                                <option value="Delayed">Delayed</option>
+                                                <option value="Cancelled">Cancelled</option>
+                                            </select>
+                                            <button type="submit" class="btn btn-sm btn-outline-primary">
+                                                <i class="fas fa-sync-alt"></i> Update
+                                            </button>
+                                        </form>
+                                        <form method="post" action="/remove_flight" class="d-inline">
+                                            <input type="hidden" name="flight_id" value="{{ flight.flight_id }}">
+                                            <button type="submit" class="btn btn-sm btn-outline-danger">
+                                                <i class="fas fa-trash-alt"></i> Remove
+                                            </button>
+                                        </form>
+                                    </div>
+                                </td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+                {% else %}
+                    <p class="text-muted mb-0">No flights found.</p>
+                {% endif %}
+            </div>
+        </div>
 
-        <section>
-            <h3>Add New Flight</h3>
-            <form method="post" action="/add_flight">
-                <input type="text" name="flight_id" placeholder="Flight ID" required>
-                <input type="text" name="departure_airport" placeholder="Departure Airport" required>
-                <input type="text" name="arrival_airport" placeholder="Arrival Airport" required>
-                <input type="text" name="departure_time" placeholder="Departure Time" required>
-                <input type="text" name="arrival_time" placeholder="Arrival Time" required>
-                <button type="submit">Add Flight</button>
-            </form>
-        </section>
+        <!-- Add Flight Card -->
+        <div class="card shadow-sm">
+            <div class="card-header bg-success text-white">
+                <h3 class="card-title mb-0"><i class="fas fa-plus-circle me-2"></i>Add New Flight</h3>
+            </div>
+            <div class="card-body">
+                <form method="post" action="/add_flight" class="row g-3">
+                    <div class="col-md-2">
+                        <label for="flight_id" class="form-label">Flight ID</label>
+                        <input type="text" class="form-control" id="flight_id" name="flight_id" placeholder="FL123" required>
+                    </div>
+                    <div class="col-md-2">
+                        <label for="departure_airport" class="form-label">From</label>
+                        <input type="text" class="form-control" id="departure_airport" name="departure_airport" placeholder="IST" required>
+                    </div>
+                    <div class="col-md-2">
+                        <label for="arrival_airport" class="form-label">To</label>
+                        <input type="text" class="form-control" id="arrival_airport" name="arrival_airport" placeholder="JFK" required>
+                    </div>
+                    <div class="col-md-3">
+                        <label for="departure_time" class="form-label">Departure Time</label>
+                        <input type="datetime-local" class="form-control" id="departure_time" name="departure_time" required>
+                    </div>
+                    <div class="col-md-3">
+                        <label for="arrival_time" class="form-label">Arrival Time</label>
+                        <input type="datetime-local" class="form-control" id="arrival_time" name="arrival_time" required>
+                    </div>
+                    <div class="col-12">
+                        <button type="submit" class="btn btn-primary">
+                            <i class="fas fa-plus me-1"></i> Add Flight
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
     </main>
 
-    <footer>
-        <p>&copy; 2025 Smart Airport Inc.</p>
+    <footer class="bg-dark text-white py-3 mt-4">
+        <div class="container">
+            <p class="mb-0 text-center">&copy; 2025 Smart Airport Inc. All rights reserved.</p>
+        </div>
     </footer>
+
+    <!-- Bootstrap 5 JS Bundle -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 </body>
 </html>

@@ -1,54 +1,134 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <title>Analytics Dashboard</title>
-  <link rel="stylesheet" href="/static/css/style.css">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Analytics Dashboard - Smart Airport</title>
+    <!-- Bootstrap 5 CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Custom CSS -->
+    <link rel="stylesheet" href="/static/css/style.css">
 </head>
-<body>
-  
-  {% include './components/header.html' %}
-  
-  <main>
-    <section>
-      <h2>Smart Airport Analytics</h2>
+<body class="bg-light">
+    {% include './components/header.html' %}
+    
+    <main class="container py-4">
+        <div class="row">
+            <!-- Flight Delays Card -->
+            <div class="col-md-6 mb-4">
+                <div class="card shadow-sm h-100">
+                    <div class="card-header bg-warning text-white">
+                        <h3 class="card-title mb-0"><i class="fas fa-exclamation-triangle me-2"></i>Flight Delays</h3>
+                    </div>
+                    <div class="card-body">
+                        {% if delays %}
+                            <div class="list-group">
+                                {% for flight in delays %}
+                                <div class="list-group-item">
+                                    <div class="d-flex justify-content-between align-items-center">
+                                        <div>
+                                            <h6 class="mb-1">Flight {{ flight.flight_id }}</h6>
+                                            <small class="text-muted">{{ flight.departure_airport }} → {{ flight.arrival_airport }}</small>
+                                        </div>
+                                        <span class="badge bg-danger">{{ flight.status }}</span>
+                                    </div>
+                                </div>
+                                {% endfor %}
+                            </div>
+                        {% else %}
+                            <div class="text-center py-4">
+                                <i class="fas fa-check-circle text-success fa-3x mb-3"></i>
+                                <p class="text-muted mb-0">No delayed flights.</p>
+                            </div>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
 
-      <h3>Flight Delays</h3>
-      {% if delays %}
-        <ul>
-          {% for flight in delays %}
-          <li>
-            Flight {{ flight.flight_id }} ({{ flight.departure_airport }} → {{ flight.arrival_airport }}) - <strong>{{ flight.status }}</strong>
-          </li>
-          {% endfor %}
-        </ul>
-      {% else %}
-        <p>No delayed flights.</p>
-      {% endif %}
+            <!-- Carbon Emissions Card -->
+            <div class="col-md-6 mb-4">
+                <div class="card shadow-sm h-100">
+                    <div class="card-header bg-success text-white">
+                        <h3 class="card-title mb-0"><i class="fas fa-leaf me-2"></i>Carbon Emissions</h3>
+                    </div>
+                    <div class="card-body">
+                        <div class="d-flex align-items-center justify-content-center h-100">
+                            <div class="text-center">
+                                <h2 class="display-4 mb-0">{{ carbon_avg }}</h2>
+                                <p class="text-muted mb-0">kg CO₂ per record</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
 
-      <h3>Average Carbon Emissions</h3>
-      <p>Average carbon output per record: <strong>{{ carbon_avg }} kg</strong></p>
-
-      <h3>Passenger Statistics</h3>
-      {% if passenger_stats.stats %}
-        <ul>
-          {% for flight_id, count in passenger_stats.stats %}
-          <li>Flight {{ flight_id }} has {{ count }} passengers</li>
-          {% endfor %}
-        </ul>
-        <div>
-          <p><strong>Most passengers:</strong> Flight {{ passenger_stats.max[0] }} with {{ passenger_stats.max[1] }}</p>
-          <p><strong>Fewest passengers:</strong> Flight {{ passenger_stats.min[0] }} with {{ passenger_stats.min[1] }}</p>
-          <p><strong>Average passengers per flight:</strong> {{ passenger_stats.avg }}</p>
+            <!-- Passenger Statistics Card -->
+            <div class="col-12">
+                <div class="card shadow-sm">
+                    <div class="card-header bg-info text-white">
+                        <h3 class="card-title mb-0"><i class="fas fa-users me-2"></i>Passenger Statistics</h3>
+                    </div>
+                    <div class="card-body">
+                        {% if passenger_stats.stats %}
+                            <div class="row">
+                                <div class="col-md-8">
+                                    <div class="table-responsive">
+                                        <table class="table table-hover">
+                                            <thead>
+                                                <tr>
+                                                    <th>Flight ID</th>
+                                                    <th>Passenger Count</th>
+                                                </tr>
+                                            </thead>
+                                            <tbody>
+                                                {% for flight_id, count in passenger_stats.stats %}
+                                                <tr>
+                                                    <td>Flight {{ flight_id }}</td>
+                                                    <td>{{ count }}</td>
+                                                </tr>
+                                                {% endfor %}
+                                            </tbody>
+                                        </table>
+                                    </div>
+                                </div>
+                                <div class="col-md-4">
+                                    <div class="list-group">
+                                        <div class="list-group-item">
+                                            <h6 class="mb-1">Most Passengers</h6>
+                                            <p class="mb-0">Flight {{ passenger_stats.max[0] }}: {{ passenger_stats.max[1] }}</p>
+                                        </div>
+                                        <div class="list-group-item">
+                                            <h6 class="mb-1">Fewest Passengers</h6>
+                                            <p class="mb-0">Flight {{ passenger_stats.min[0] }}: {{ passenger_stats.min[1] }}</p>
+                                        </div>
+                                        <div class="list-group-item">
+                                            <h6 class="mb-1">Average Passengers</h6>
+                                            <p class="mb-0">{{ passenger_stats.avg }}</p>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        {% else %}
+                            <div class="text-center py-4">
+                                <i class="fas fa-info-circle text-muted fa-3x mb-3"></i>
+                                <p class="text-muted mb-0">No passenger data available.</p>
+                            </div>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
         </div>
-      {% else %}
-        <p>No passenger data available.</p>
-      {% endif %}
-    </section>
-  </main>
+    </main>
 
-  <footer>
-    <p>&copy; 2025 Smart Airport Inc.</p>
-  </footer>
+    <footer class="bg-dark text-white py-3 mt-4">
+        <div class="container">
+            <p class="mb-0 text-center">&copy; 2025 Smart Airport Inc. All rights reserved.</p>
+        </div>
+    </footer>
+
+    <!-- Bootstrap 5 JS Bundle -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 </body>
 </html>

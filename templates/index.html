@@ -2,50 +2,127 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>Smart Airport Dashboard</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Smart Airport Analytics</title>
+    <!-- Bootstrap 5 CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Custom CSS -->
     <link rel="stylesheet" href="/static/css/style.css">
 </head>
-<body>
-
+<body class="bg-light">
     {% include './components/header.html' %}
+    
+    <main class="container py-4">
+        <div class="row">
+            <!-- Flight Delays Card -->
+            <div class="col-md-6 mb-4">
+                <div class="card shadow-sm h-100">
+                    <div class="card-header bg-primary text-white">
+                        <h3 class="card-title mb-0"><i class="fas fa-clock me-2"></i>Flight Delays</h3>
+                    </div>
+                    <div class="card-body">
+                        {% if delays %}
+                            <div class="list-group">
+                                {% for flight in delays %}
+                                <div class="list-group-item">
+                                    <div class="d-flex justify-content-between align-items-center">
+                                        <div>
+                                            <h6 class="mb-1">Flight {{ flight.flight_id }}</h6>
+                                            <small class="text-muted">{{ flight.departure_airport }} → {{ flight.arrival_airport }}</small>
+                                        </div>
+                                        <span class="badge bg-warning">{{ flight.status }}</span>
+                                    </div>
+                                </div>
+                                {% endfor %}
+                            </div>
+                        {% else %}
+                            <p class="text-muted mb-0">No delayed flights.</p>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
 
-    <main>
-        <section>
-            <h2>Welcome to the Smart Airport Dashboard</h2>
-            <p>Use the navigation above to access flight data, analytics, and security features.</p>
-        </section>
+            <!-- Carbon Emissions Card -->
+            <div class="col-md-6 mb-4">
+                <div class="card shadow-sm h-100">
+                    <div class="card-header bg-success text-white">
+                        <h3 class="card-title mb-0"><i class="fas fa-leaf me-2"></i>Carbon Emissions</h3>
+                    </div>
+                    <div class="card-body">
+                        <div class="d-flex align-items-center justify-content-center h-100">
+                            <div class="text-center">
+                                <h2 class="display-4 mb-0">{{ carbon_avg }}</h2>
+                                <p class="text-muted mb-0">kg CO₂ per record</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
 
-        <section>
-            <h3>Recent Carbon Emission Logs</h3>
-            {% if logs %}
-            <table>
-                <thead>
-                    <tr>
-                        <th>ID</th>
-                        <th>Flight ID</th>
-                        <th>Source</th>
-                        <th>Carbon Output (kg)</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    {% for log in logs %}
-                    <tr>
-                        <td>{{ log[0] }}</td>
-                        <td>{{ log[1] }}</td>
-                        <td>{{ log[2] }}</td>
-                        <td>{{ log[3] }}</td>
-                    </tr>
-                    {% endfor %}
-                </tbody>
-            </table>
-            {% else %}
-                <p>No emission logs available.</p>
-            {% endif %}
-        </section>
+            <!-- Passenger Statistics Card -->
+            <div class="col-12">
+                <div class="card shadow-sm">
+                    <div class="card-header bg-info text-white">
+                        <h3 class="card-title mb-0"><i class="fas fa-users me-2"></i>Passenger Statistics</h3>
+                    </div>
+                    <div class="card-body">
+                        {% if passenger_stats %}
+                            <div class="row">
+                                <div class="col-md-8">
+                                    <div class="table-responsive">
+                                        <table class="table table-hover">
+                                            <thead>
+                                                <tr>
+                                                    <th>Flight ID</th>
+                                                    <th>Passenger Count</th>
+                                                </tr>
+                                            </thead>
+                                            <tbody>
+                                                {% for flight_id, count in passenger_stats %}
+                                                <tr>
+                                                    <td>Flight {{ flight_id }}</td>
+                                                    <td>{{ count }}</td>
+                                                </tr>
+                                                {% endfor %}
+                                            </tbody>
+                                        </table>
+                                    </div>
+                                </div>
+                                <div class="col-md-4">
+                                    <div class="list-group">
+                                        <div class="list-group-item">
+                                            <h6 class="mb-1">Most Passengers</h6>
+                                            <p class="mb-0">Flight {{ passenger_stats.max[0] }}: {{ passenger_stats.max[1] }}</p>
+                                        </div>
+                                        <div class="list-group-item">
+                                            <h6 class="mb-1">Fewest Passengers</h6>
+                                            <p class="mb-0">Flight {{ passenger_stats.min[0] }}: {{ passenger_stats.min[1] }}</p>
+                                        </div>
+                                        <div class="list-group-item">
+                                            <h6 class="mb-1">Average Passengers</h6>
+                                            <p class="mb-0">{{ passenger_stats.avg }}</p>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        {% else %}
+                            <p class="text-muted mb-0">No passenger data available.</p>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+        </div>
     </main>
 
-    <footer>
-        <p>&copy; 2025 Smart Airport Inc.</p>
+    <footer class="bg-dark text-white py-3 mt-4">
+        <div class="container">
+            <p class="mb-0 text-center">&copy; 2025 Smart Airport Inc. All rights reserved.</p>
+        </div>
     </footer>
+
+    <!-- Bootstrap 5 JS Bundle -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 </body>
 </html>

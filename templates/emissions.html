@@ -1,59 +1,116 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Carbon Emissions</title>
-  <link rel="stylesheet" href="/static/css/style.css">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Carbon Emissions - Smart Airport</title>
+    <!-- Bootstrap 5 CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Custom CSS -->
+    <link rel="stylesheet" href="/static/css/style.css">
 </head>
-<body>
-
+<body class="bg-light">
     {% include './components/header.html' %}
 
-    <main>
-    <section>
-      <h2>Log Carbon Emissions</h2>
+    <main class="container py-4">
+        <div class="row justify-content-center">
+            <div class="col-md-8">
+                <div class="card shadow-sm">
+                    <div class="card-header bg-success text-white">
+                        <h3 class="card-title mb-0"><i class="fas fa-leaf me-2"></i>Log Carbon Emissions</h3>
+                    </div>
+                    <div class="card-body">
+                        {% with messages = get_flashed_messages(with_categories=true) %}
+                        {% if messages %}
+                            {% for category, message in messages %}
+                            <div class="alert alert-{{ category }} alert-dismissible fade show" role="alert">
+                                {{ message }}
+                                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                            </div>
+                            {% endfor %}
+                        {% endif %}
+                        {% endwith %}
 
-      {% with messages = get_flashed_messages(with_categories=true) %}
-      {% if messages %}
-        {% for category, message in messages %}
-          <div class="alert alert-{{ category }}">
-            {{ message }}
-          </div>
-        {% endfor %}
-      {% endif %}
-      {% endwith %}
+                        <form action="/log_emissions" method="POST" class="needs-validation" novalidate>
+                            <div class="row g-3">
+                                <div class="col-md-12">
+                                    <label for="flight_id" class="form-label">Flight</label>
+                                    <select class="form-select" name="flight_id" id="flight_id" required>
+                                        <option value="" selected disabled>Select a flight</option>
+                                        {% for flight in flights %}
+                                        <option value="{{ flight.flight_id }}">
+                                            {{ flight.flight_id }} ({{ flight.departure_airport }} → {{ flight.arrival_airport }})
+                                        </option>
+                                        {% endfor %}
+                                    </select>
+                                    <div class="invalid-feedback">
+                                        Please select a flight.
+                                    </div>
+                                </div>
 
-      <form action="/log_emissions" method="POST">
-        <div class="form-group">
-          <label for="flight_id">Flight ID</label>
-          <select name="flight_id" id="flight_id" required>
-            {% for flight in flights %}
-            <option value="{{ flight.flight_id }}">{{ flight.flight_id }} ({{ flight.departure_airport }} → {{ flight.arrival_airport }})</option>
-            {% endfor %}
-          </select>
+                                <div class="col-md-12">
+                                    <label for="source" class="form-label">Emission Source</label>
+                                    <input type="text" class="form-control" name="source" id="source" required>
+                                    <div class="invalid-feedback">
+                                        Please enter the emission source.
+                                    </div>
+                                </div>
+
+                                <div class="col-md-12">
+                                    <label for="carbon_output" class="form-label">Carbon Output (kg)</label>
+                                    <div class="input-group">
+                                        <input type="number" step="0.01" class="form-control" name="carbon_output" id="carbon_output" required>
+                                        <span class="input-group-text">kg CO₂</span>
+                                    </div>
+                                    <div class="invalid-feedback">
+                                        Please enter the carbon output.
+                                    </div>
+                                </div>
+
+                                <div class="col-12">
+                                    <div class="d-grid gap-2 d-md-flex justify-content-md-end">
+                                        <a href="/" class="btn btn-outline-secondary me-md-2">
+                                            <i class="fas fa-times me-1"></i> Cancel
+                                        </a>
+                                        <button type="submit" class="btn btn-success">
+                                            <i class="fas fa-save me-1"></i> Log Emissions
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
         </div>
+    </main>
 
-        <div class="form-group">
-          <label for="source">Emission Source</label>
-          <input type="text" name="source" id="source" required>
+    <footer class="bg-dark text-white py-3 mt-4">
+        <div class="container">
+            <p class="mb-0 text-center">&copy; 2025 Smart Airport Inc. All rights reserved.</p>
         </div>
+    </footer>
 
-        <div class="form-group">
-          <label for="carbon_output">Carbon Output</label>
-          <input type="text" name="carbon_output" id="carbon_output" required>
-        </div>
-
-        <div class="form-actions">
-          <button type="submit">Log Emissions</button>
-          <a href="/" class="cancel-btn">Cancel</a>
-        </div>
-      </form>
-    </section>
-  </main>
-
-  <footer>
-    <p>&copy; 2025 Smart Airport Inc.</p>
-  </footer>
+    <!-- Bootstrap 5 JS Bundle -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <!-- Form Validation -->
+    <script>
+        (function () {
+            'use strict'
+            var forms = document.querySelectorAll('.needs-validation')
+            Array.prototype.slice.call(forms)
+                .forEach(function (form) {
+                    form.addEventListener('submit', function (event) {
+                        if (!form.checkValidity()) {
+                            event.preventDefault()
+                            event.stopPropagation()
+                        }
+                        form.classList.add('was-validated')
+                    }, false)
+                })
+        })()
+    </script>
 </body>
 </html>
