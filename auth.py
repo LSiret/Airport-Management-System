@@ -9,16 +9,21 @@ LOG_FILE = "logs.txt"
 # This loads all users from file
 def load_users():
     if not os.path.exists(USER_FILE):
-        with open(USER_FILE, "w") as f:
+        with open(USER_FILE, "w", encoding='utf-8') as f:
             json.dump({}, f)
         return {}
-    with open(USER_FILE, "r") as f:
+    with open(USER_FILE, "r", encoding='utf-8') as f:
         return json.load(f)
+
 
 # Saves all users to the file
 def save_users(users):
-    with open(USER_FILE, "w") as f:
-        json.dump(users, f, indent=4)
+    try:
+        with open(USER_FILE, "w", encoding='utf-8') as f:
+            json.dump(users, f, indent=4)
+    except Exception as e:
+        print(f"Error saving users: {e}")
+
 
 # It logs when you logged in (time/date)
 def log_event(event):
@@ -29,10 +34,12 @@ def log_event(event):
 # Register new user with secure hash system
 def register(username, password, role="user"):
     users = load_users()
+
     if username in users:
         return False, "Username already exists."
 
-    hashed = bcrypt.hashpw(password.encode(), bcrypt.gensalt()).decode()
+    # Hash the password using bcrypt and ensure the hash is stored as a string
+    hashed = bcrypt.hashpw(password.encode(), bcrypt.gensalt()).decode()  # .decode() to make sure it's stored as string
 
     users[username] = {
         "password": hashed,
@@ -47,15 +54,18 @@ def register(username, password, role="user"):
     save_users(users)
     return True, f"User '{username}' registered as '{role}'."
 
+
 # Account login code
 def login(username, password):
     users = load_users()
+    
+    # Check if user exists
     if username not in users:
         return False, "User not found.", None
 
     user_data = users[username]
 
-    # Checks account lockout until
+    # Account lockout mechanism
     lockout_until = user_data.get("lockout_until")
     if lockout_until:
         try:
@@ -65,9 +75,16 @@ def login(username, password):
         except ValueError:
             user_data["lockout_until"] = None
 
-    hashed = user_data["password"].encode()
+    # Get the hashed password from the database (it will be stored as a string)
+    stored_hash = user_data["password"]
 
-    if bcrypt.checkpw(password.encode(), hashed):
+    print("Entered password: ", password)
+    print("Stored hashed password: ", stored_hash)
+    print(f"Password comparison: {bcrypt.checkpw(password.encode(), stored_hash.encode())}")
+
+    
+    # Compare entered password with stored hash
+    if bcrypt.checkpw(password.encode(), stored_hash.encode()):  # Ensure both are byte-encoded before comparison
         user_data["failed_attempts"] = 0
         user_data["lockout_until"] = None
         save_users(users)
@@ -84,3 +101,4 @@ def login(username, password):
 
         save_users(users)
         return False, message, None
+

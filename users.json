@@ -1,0 +1,11 @@
+{
+    "user1": {
+        "password": "$2b$12$VptM5.vwEfdUO4d./8v3DuqPLT6l5DBys4vnQXy59QlgbczxPY9eC",
+        "role": "user",
+        "carbon_footprint": 0.0,
+        "email": "",
+        "phone": "",
+        "failed_attempts": 0,
+        "lockout_until": null
+    }
+}

@@ -1,0 +1,136 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Luggage Management - Smart Airport</title>
+    <!-- Bootstrap 5 CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Custom CSS -->
+    <link rel="stylesheet" href="/static/css/style.css">
+</head>
+<body class="bg-light">
+    {% include './components/header.html' %}
+
+    <main class="container py-4">
+        <div class="row justify-content-center">
+            <div class="col-md-10">
+                <div class="card shadow-sm">
+                    <div class="card-header bg-primary text-white">
+                        <h3 class="card-title mb-0"><i class="fas fa-suitcase-rolling me-2"></i>Luggage Management</h3>
+                    </div>
+                    <div class="card-body">
+
+                        {% with messages = get_flashed_messages(with_categories=true) %}
+                        {% if messages %}
+                            {% for category, message in messages %}
+                                <div class="alert alert-{{ category }} alert-dismissible fade show" role="alert">
+                                    {{ message }}
+                                    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                                </div>
+                            {% endfor %}
+                        {% endif %}
+                        {% endwith %}
+
+                        <div class="row g-4">
+                            <!-- Add Luggage Form -->
+                            <div class="col-md-6">
+                                <h5>Add New Luggage</h5>
+                                <form action="{{ url_for('add_luggage') }}" method="POST" class="needs-validation" novalidate>
+                                    <div class="mb-3">
+                                        <label for="flight_id" class="form-label">Flight</label>
+                                        <select class="form-select" id="flight_id" name="flight_id" required>
+                                            <option value="" selected disabled>Select a flight</option>
+                                            {% for flight in flights %}
+                                            <option value="{{ flight.flight_id }}">
+                                                {{ flight.flight_id }} ({{ flight.departure_airport }} → {{ flight.arrival_airport }})
+                                            </option>
+                                            {% endfor %}
+                                        </select>
+                                        <div class="invalid-feedback">Please select a flight.</div>
+                                    </div>
+                                    <div class="mb-3">
+                                        <label for="passenger_id" class="form-label">Passenger ID</label>
+                                        <input type="text" class="form-control" id="passenger_id" name="passenger_id" required>
+                                        <div class="invalid-feedback">Please enter a passenger ID.</div>
+                                    </div>
+                                    <div class="mb-3">
+                                        <label for="luggage_id" class="form-label">Luggage ID</label>
+                                        <input type="text" class="form-control" id="luggage_id" name="luggage_id" required>
+                                        <div class="invalid-feedback">Please enter luggage ID.</div>
+                                    </div>
+                                    <div class="mb-3">
+                                        <label for="weight" class="form-label">Weight (kg)</label>
+                                        <input type="number" class="form-control" id="weight" name="weight" step="0.1" required>
+                                        <div class="invalid-feedback">Please enter the luggage weight.</div>
+                                    </div>
+                                    <div class="mb-3">
+                                        <label for="status" class="form-label">Status</label>
+                                        <input type="text" class="form-control" id="status" name="status" required>
+                                        <div class="invalid-feedback">Please enter luggage status.</div>
+                                    </div>
+                                    <div class="d-grid">
+                                        <button type="submit" class="btn btn-primary">
+                                            <i class="fas fa-plus-circle me-1"></i> Add Luggage
+                                        </button>
+                                    </div>
+                                </form>
+                            </div>
+
+                            <!-- Update Status Form -->
+                            <div class="col-md-6">
+                                <h5>Update Luggage Status</h5>
+                                <form action="{{ url_for('update_luggage_status') }}" method="POST" class="needs-validation" novalidate>
+                                    <div class="mb-3">
+                                        <label for="luggage_id_update" class="form-label">Luggage ID</label>
+                                        <input type="text" class="form-control" id="luggage_id_update" name="luggage_id" required>
+                                        <div class="invalid-feedback">Please enter luggage ID.</div>
+                                    </div>
+                                    <div class="mb-3">
+                                        <label for="status_update" class="form-label">New Status</label>
+                                        <input type="text" class="form-control" id="status_update" name="status" required>
+                                        <div class="invalid-feedback">Please enter new status.</div>
+                                    </div>
+                                    <div class="d-grid">
+                                        <button type="submit" class="btn btn-warning">
+                                            <i class="fas fa-edit me-1"></i> Update Status
+                                        </button>
+                                    </div>
+                                </form>
+                            </div>
+                        </div>
+
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <footer class="bg-dark text-white py-3 mt-4">
+        <div class="container">
+            <p class="mb-0 text-center">&copy; 2025 Smart Airport Inc. All rights reserved.</p>
+        </div>
+    </footer>
+
+    <!-- Bootstrap 5 JS Bundle -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <!-- Form Validation Script -->
+    <script>
+        (function () {
+            'use strict'
+            var forms = document.querySelectorAll('.needs-validation')
+            Array.prototype.slice.call(forms).forEach(function (form) {
+                form.addEventListener('submit', function (event) {
+                    if (!form.checkValidity()) {
+                        event.preventDefault()
+                        event.stopPropagation()
+                    }
+                    form.classList.add('was-validated')
+                }, false)
+            })
+        })()
+    </script>
+</body>
+</html>
