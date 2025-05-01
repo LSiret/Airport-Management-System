@@ -168,6 +168,39 @@ def security_register():
                 return redirect(url_for('security_login'))
     return render_template('security_register.html')
 
+@app.route('/luggage')
+def luggage():
+    return render_template('luggage.html', flights=airport_controller.flights)
+
+@app.post('/add_luggage')
+def add_luggage():
+    flight_id = request.form['flight_id']
+    passenger_id = request.form['passenger_id']
+    luggage_id = request.form['luggage_id']
+    weight = request.form['weight']
+    status = request.form['status']
+
+    try:
+        airport_controller.log_new_luggage(flight_id, passenger_id, luggage_id, weight, status)
+        flash(f"Luggage {luggage_id} added successfully.", 'success')
+    except Exception as e:
+        flash(f"Failed to add luggage: {str(e)}", 'danger')
+
+    return redirect(url_for('luggage'))
+
+@app.post('/update_luggage_status')
+def update_luggage_status():
+    luggage_id = request.form['luggage_id']
+    status = request.form['status']
+
+    try:
+        airport_controller.update_luggage_status(luggage_id, status)
+        flash(f"Luggage {luggage_id} status updated to {status}.", 'success')
+    except Exception as e:
+        flash(f"Failed to update luggage status: {str(e)}", 'danger')
+
+    return redirect(url_for('luggage'))
+
 
 
 # Check this file was run directly
