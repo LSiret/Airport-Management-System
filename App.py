@@ -1,6 +1,10 @@
 # Import necessary files
 from AirportController import AirportController
-from flask import Flask, render_template, request, redirect, url_for, flash
+from flask import Flask, render_template, request, redirect, url_for, flash, session
+from auth import register, login, log_event, load_users
+import re
+import random
+
 
 # Initialize the Flask app
 app = Flask(__name__)
@@ -89,6 +93,80 @@ def log_emissions():
         flash(f"Logging failed: {str(e)}", 'danger')
 
     return redirect(url_for('emissions'))
+
+# Add these new routes to App.py
+@app.route('/security')
+def security():
+    if 'username' not in session:
+        return redirect(url_for('security_login'))
+    return render_template('security.html', username=session['username'], role=session.get('role'))
+
+@app.route('/security/login', methods=['GET', 'POST'])
+def security_login():
+    if request.method == 'POST':
+        username = request.form['username']
+        password = request.form['password']
+        success, message, role = login(username, password)
+        
+        if success:
+            # Simulate 2FA (for demo purposes)
+            session['2fa_pending'] = True
+            session['2fa_code'] = str(random.randint(100000, 999999))
+            session['temp_user'] = username
+            session['temp_role'] = role
+            flash(f"2FA code sent (simulated): {session['2fa_code']}", 'info')
+            return redirect(url_for('security_2fa'))
+        else:
+            flash(message, 'danger')
+    return render_template('security_login.html')
+
+@app.route('/security/2fa', methods=['GET', 'POST'])
+def security_2fa():
+    if not session.get('2fa_pending'):
+        return redirect(url_for('security_login'))
+    
+    if request.method == 'POST':
+        user_code = request.form['code']
+        if user_code == session.get('2fa_code'):
+            session['username'] = session['temp_user']
+            session['role'] = session['temp_role']
+            session.pop('2fa_pending', None)
+            log_event(f"{session['username']} logged in")
+            flash("Login successful!", 'success')
+            return redirect(url_for('security'))
+        else:
+            flash("Invalid 2FA code. Try again.", 'danger')
+    return render_template('security_2fa.html')
+
+@app.route('/security/logout')
+def security_logout():
+    if 'username' in session:
+        log_event(f"{session['username']} logged out")
+        session.clear()
+    return redirect(url_for('security_login'))
+
+@app.route('/security/register', methods=['GET', 'POST'])
+def security_register():
+    if request.method == 'POST':
+        username = request.form['username']
+        password = request.form['password']
+        role = request.form.get('role', 'user')
+        
+        # Password validation
+        if not (8 <= len(password) <= 10):
+            flash("Password must be 8–10 characters long.", 'danger')
+        elif not re.search(r"[A-Z]", password):
+            flash("Password must include at least one uppercase letter.", 'danger')
+        elif not re.search(r"[a-z]", password):
+            flash("Password must include at least one lowercase letter.", 'danger')
+        elif not re.search(r"[!@#$%^&*(),.?\":{}|<>]", password):
+            flash("Password must include at least one special character.", 'danger')
+        else:
+            success, message = register(username, password, role)
+            flash(message, 'success' if success else 'danger')
+            if success:
+                return redirect(url_for('security_login'))
+    return render_template('security_register.html')
 
 
 
