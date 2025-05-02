@@ -1,0 +1,13 @@
+{% include "components/header.html" %}
+<div class="container mt-5">
+  <div class="card shadow">
+    <div class="card-header bg-dark text-white"> Carbon Footprint Report</div>
+    <div class="card-body">
+      <p class="lead">
+        Your current carbon footprint is:
+        <strong class="text-success">{{ footprint }} kg CO₂</strong>
+      </p>
+      <a href="{{ url_for('security') }}" class="btn btn-outline-secondary mt-3">← Back to Dashboard</a>
+    </div>
+  </div>
+</div>

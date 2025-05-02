@@ -1,0 +1,16 @@
+{% include "components/header.html" %}
+<div class="container mt-5">
+  <div class="card shadow">
+    <div class="card-header bg-dark text-white"> Add Travel to Footprint</div>
+    <div class="card-body">
+      <form method="POST">
+        <div class="mb-3">
+          <label for="distance" class="form-label">Travel Distance (km)</label>
+          <input type="number" name="distance" step="0.01" class="form-control" required>
+        </div>
+        <button type="submit" class="btn btn-success">Add Travel</button>
+        <a href="{{ url_for('security') }}" class="btn btn-secondary">Cancel</a>
+      </form>
+    </div>
+  </div>
+</div>

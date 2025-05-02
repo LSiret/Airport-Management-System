@@ -1,0 +1,12 @@
+{% include "components/header.html" %}
+<div class="container mt-5">
+  <div class="card shadow">
+    <div class="card-header bg-dark text-white"> System Logs</div>
+    <div class="card-body">
+      {% for line in logs %}
+        <pre class="text-muted">{{ line }}</pre>
+      {% endfor %}
+      <a href="{{ url_for('security') }}" class="btn btn-secondary mt-3">← Back to Dashboard</a>
+    </div>
+  </div>
+</div>

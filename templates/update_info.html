@@ -1,0 +1,20 @@
+{% include "components/header.html" %}
+<div class="container mt-5">
+  <div class="card shadow">
+    <div class="card-header bg-dark text-white"> Update Personal Information</div>
+    <div class="card-body">
+      <form method="POST">
+        <div class="mb-3">
+          <label for="email" class="form-label">Email Address</label>
+          <input type="email" name="email" value="{{ email }}" class="form-control" required>
+        </div>
+        <div class="mb-3">
+          <label for="phone" class="form-label">Phone Number</label>
+          <input type="text" name="phone" value="{{ phone }}" class="form-control" required>
+        </div>
+        <button type="submit" class="btn btn-primary">Update</button>
+        <a href="{{ url_for('security') }}" class="btn btn-secondary">Cancel</a>
+      </form>
+    </div>
+  </div>
+</div>

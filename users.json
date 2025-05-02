@@ -1,6 +1,24 @@
 {
-    "user1": {
-        "password": "$2b$12$VptM5.vwEfdUO4d./8v3DuqPLT6l5DBys4vnQXy59QlgbczxPY9eC",
+    "admin": {
+        "password": "$2b$12$nxOtoM2/pqPK.hGivFfHLeTgrooHzBKyKF9xXxJ5hp7X8sxbv4XYO",
+        "role": "user",
+        "carbon_footprint": 0.0,
+        "email": "kandelanish8@gmail.com",
+        "phone": "+447888090722",
+        "failed_attempts": 0,
+        "lockout_until": null
+    },
+    "Anish": {
+        "password": "$2b$12$.v3G6Ur5rwElerFZXSrpDerl6WnjRtWPeBrFpKbxT0FmDDUn6IEp2",
+        "role": "admin",
+        "carbon_footprint": 0.0,
+        "email": "",
+        "phone": "",
+        "failed_attempts": 0,
+        "lockout_until": null
+    },
+    "Tamas": {
+        "password": "$2b$12$cfiH3gEvkOb5ebSYV5KpGe6ZAzGfIrHsmP3wq3XMP29RpbpXKEPBW",
         "role": "user",
         "carbon_footprint": 0.0,
         "email": "",

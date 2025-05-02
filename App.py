@@ -1,7 +1,7 @@
 # Import necessary files
 from AirportController import AirportController
 from flask import Flask, render_template, request, redirect, url_for, flash, session
-from auth import register, login, log_event, load_users
+from auth import register, login, log_event, load_users, save_users
 import re
 import random
 
@@ -136,7 +136,8 @@ def security_2fa():
             return redirect(url_for('security'))
         else:
             flash("Invalid 2FA code. Try again.", 'danger')
-    return render_template('security_2fa.html')
+    return render_template('security_2fa.html', code=session.get('2fa_code'))
+
 
 @app.route('/security/logout')
 def security_logout():
@@ -167,6 +168,75 @@ def security_register():
             if success:
                 return redirect(url_for('security_login'))
     return render_template('security_register.html')
+
+@app.route('/carbon-report')
+def carbon_report():
+    if 'username' not in session:
+        return redirect(url_for('security_login'))
+    users = load_users()
+    username = session['username']
+    footprint = users.get(username, {}).get('carbon_footprint', 0.0)
+    return render_template('carbon_report.html', footprint=footprint)
+
+@app.route('/update-info', methods=['GET', 'POST'])
+def update_info():
+    if 'username' not in session:
+        return redirect(url_for('security_login'))
+
+    users = load_users()
+    username = session['username']
+
+    if request.method == 'POST':
+        users[username]['email'] = request.form['email']
+        users[username]['phone'] = request.form['phone']
+        save_users(users)
+        flash("Information updated.", "success")
+        return redirect(url_for('security'))
+
+    user_data = users[username]
+    return render_template('update_info.html', email=user_data.get('email', ''), phone=user_data.get('phone', ''))
+
+@app.route('/add-travel', methods=['GET', 'POST'])
+def add_travel():
+    if 'username' not in session:
+        return redirect(url_for('security_login'))
+
+    users = load_users()
+    username = session['username']
+
+    if request.method == 'POST':
+        try:
+            distance = float(request.form['distance'])
+            emissions = round(distance * 0.115, 2)
+            users[username]['carbon_footprint'] += emissions
+            save_users(users)
+            flash(f"{emissions} kg CO₂ added to your footprint.", "success")
+            return redirect(url_for('security'))
+        except ValueError:
+            flash("Please enter a valid distance.", "danger")
+
+    return render_template('add_travel.html')
+
+@app.route('/view-logs')
+def view_logs():
+    if 'username' not in session or session['role'] != 'admin':
+        return redirect(url_for('security_login'))
+
+    try:
+        with open('logs.txt', 'r') as f:
+            logs = f.readlines()
+    except FileNotFoundError:
+        logs = ["No log file found."]
+
+    return render_template('view_logs.html', logs=logs)
+
+@app.route('/manage-users')
+def manage_users():
+    if 'username' not in session or session.get('role') != 'admin':
+        return redirect(url_for('security_login'))
+
+    users = load_users()
+    return render_template('manage_users.html', users=users)
 
 @app.route('/luggage')
 def luggage():
@@ -200,7 +270,6 @@ def update_luggage_status():
         flash(f"Failed to update luggage status: {str(e)}", 'danger')
 
     return redirect(url_for('luggage'))
-
 
 
 # Check this file was run directly
